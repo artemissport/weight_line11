@@ -275,14 +275,11 @@
         </div>
 
         <div class="featured-image">
-            <!-- 在這裡放置您的主要圖片 -->
-            <div class="image-placeholder">
-                請將主要圖片 (例如: main-image.jpg) 放在此處<br>
-                建議尺寸: 800x400 像素
+            <img src="main-image.jpg" alt="減肥心路歷程分享" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <div class="image-placeholder" style="display: none;">
+                圖片載入中...<br>
+                請確保 main-image.jpg 已放在同一資料夾
             </div>
-            <!-- 如果有圖片，請用以下格式替換上面的 placeholder：
-            <img src="main-image.jpg" alt="減肥心路歷程" />
-            -->
         </div>
 
         <div class="content">
@@ -456,7 +453,7 @@
         </div>
 
         <div class="footer">
-            <p>©健康生活分享 | 用愛重啟健康人生</p>
+            <p>© 2025 健康生活分享 | 用愛重啟健康人生</p>
         </div>
     </div>
 
@@ -494,8 +491,53 @@
             });
         }, observerOptions);
 
+        // 自動偵測圖片
+        function loadImage() {
+            const imageContainer = document.querySelector('.featured-image');
+            const possibleImages = [
+                'main-image.jpg',
+                'main-image.png',
+                'main-image.jpeg',
+                'image.jpg',
+                'image.png',
+                'photo.jpg',
+                'photo.png',
+                'cover.jpg',
+                'cover.png'
+            ];
+            
+            let imageLoaded = false;
+            
+            possibleImages.forEach((imageName, index) => {
+                if (imageLoaded) return;
+                
+                const img = new Image();
+                img.onload = function() {
+                    if (!imageLoaded) {
+                        imageLoaded = true;
+                        const imgElement = imageContainer.querySelector('img');
+                        imgElement.src = imageName;
+                        imgElement.style.display = 'block';
+                        imageContainer.querySelector('.image-placeholder').style.display = 'none';
+                    }
+                };
+                img.onerror = function() {
+                    if (index === possibleImages.length - 1 && !imageLoaded) {
+                        // 如果所有圖片都載入失敗，顯示提示
+                        imageContainer.querySelector('.image-placeholder').innerHTML = 
+                            '請將圖片放在同一資料夾<br>支援格式: main-image.jpg, image.jpg, photo.jpg, cover.jpg 等';
+                        imageContainer.querySelector('.image-placeholder').style.display = 'flex';
+                    }
+                };
+                img.src = imageName;
+            });
+        }
+
         // 為所有段落添加淡入效果
         document.addEventListener('DOMContentLoaded', function() {
+            // 載入圖片
+            loadImage();
+            
             const elements = document.querySelectorAll('h2, h3, p, .highlight, .quote');
             elements.forEach(el => {
                 el.style.opacity = '0';
